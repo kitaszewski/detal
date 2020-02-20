@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+  <head>
+	  <title>Lista klientów</title>
+
+	  <div th:replace="fragments/header :: header-css"/>
+
+  </head>
+  <body>
+
+  <div th:replace="fragments/header :: header"/>
+
+    <div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6">
+				<h4>Przydatne Rawinetowe linki</h4>
+				<br>
+				<dl>
+					<dt>
+						Instrukcja <a href="https://docs.google.com/document/d/1npNfQLK9OfBVylMVnkUbR5byUBD_5tXZbvwQj4t3K58/edit?usp=sharing" target="_blank"><i class="material-icons md-18">launch</i></a>
+					</dt>
+					<dd>
+						Instrukcja dodania klienta w sieci GPON.
+					</dd>
+					<dt>
+						Instrukcja WiFi <a href="https://docs.google.com/document/d/1B_QnsvApSv_aq9RY0VP0_f2wAZnAtuhrGT4sFSc7WCI/edit?usp=sharing" target="_blank"><i class="material-icons md-18">launch</i></a>
+					</dt>
+					<dd>
+						Instrukcja dla klientów zmiany nazwy i hasła sieci WiFi na ONT.
+					</dd>
+					<dt>
+						Zabbix <a href="https://zabbix.rawinet.pl" target="_blank"><i class="material-icons md-18">launch</i></a>
+					</dt>
+					<dd>
+						System monitoring sieci i serwerów.
+					</dd>
+					<dt>
+						Kibana <a href="https://log.rawinet.pl" target="_blank"><i class="material-icons md-18">launch</i></a>
+					</dt>
+					<dd>
+						Przetwarzanie logów z urządzeń przez ELK Stack.
+					</dd>
+					<dt>
+						Poczta home.pl <a href="https://poczta.home.pl" target="_blank"><i class="material-icons md-18">launch</i></a>
+					</dt>
+					<dd>
+						Nowa poczta na home.pl
+					</dd>
+					<dt>
+						SMS SGT <a href="https://sms.sgtsa.pl/sms/index/login" target="_blank"><i class="material-icons md-18">launch</i></a>
+					</dt>
+					<dd>
+						System SMS SGT do obsługi IPTV
+					</dd>
+					<dt>
+						Sondy SGT <a href="https://sgtsa.pl/monitoring/" target="_blank"><i class="material-icons md-18">launch</i></a>
+					</dt>
+					<dd>
+						Monitoring sond STB.
+					</dd>
+				</dl>
+			</div>
+			<div class="col-md-6">
+				<h4>Zmiany w aplikacji</h4>
+				<br>
+				<dl th:each="notice,iterationStatus : ${notices}">
+					<dt th:text="${notice.title}"></dt>
+					<dd th:text="${notice.message}"></dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+
+  <div th:replace="fragments/footer :: footer"/>
+
+  </body>
+</html>

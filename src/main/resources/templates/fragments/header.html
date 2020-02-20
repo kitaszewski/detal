@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:fragment="header-css">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="Rawi-Net klienci detaliczni">
+        <meta name="author" content="PK">
+
+        <link th:href ="@{/css/bootstrap.4.3.1.min.css}" rel="stylesheet">
+        <link th:href ="@{/css/bootstrap-toggle.min.css}" rel="stylesheet">
+        <link th:href ="@{/css/material-icons.css}" rel="stylesheet">
+        <link th:href ="@{/css/datepicker.css}" rel="stylesheet">
+    </div>
+</head>
+<body>
+<div th:fragment="header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}"><i class="material-icons">home</i></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" th:href="@{#}" id="navCustomerDropdown" data-toggle="dropdown"><i class="material-icons md-18">person</i> Klienci</a>
+                        <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navCustomerDropdown">
+                            <a class="dropdown-item" th:href="@{/customers}"><i class="material-icons md-18">list</i> Lista klientów</a>
+                            <a class="dropdown-item" th:href="@{/addcustomer}"><i class="material-icons md-18">person_add</i> Nowy klient</a>
+                        </div>
+                    </li>
+                    <div sec:authorize="hasAuthority('OFFICE')">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/smsbox}">SMS</a>
+                        </li>
+                    </div>
+                    <li class="nav-item dropdown ml-md-auto">
+                        <a class="nav-link dropdown-toggle" th:href="@{#}" id="navbarDropdownMenuLink" data-toggle="dropdown">Konto</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                            <div sec:authorize="hasAuthority('ADMIN')">
+                                <a class="dropdown-item" th:href="@{/sandbox}">Piaskownica</a>
+                                <a class="dropdown-item disabled" th:href="@{#}">Admin</a>
+                                <a class="dropdown-item disabled" th:href="@{#}">Użytkownicy</a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                            <a class="dropdown-item" th:href="@{/chpass}">Zmiana hasła</a>
+                            <form class="dropdown-item" th:action="@{/logout}" method="post">
+                                <button class="btn btn-outline-danger" type="submit">Wyloguj</button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

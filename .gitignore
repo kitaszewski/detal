@@ -4,6 +4,13 @@ target/
 !**/src/main/**
 !**/src/test/**
 
+### Sensetive data ###
+**/src/main/resources/application.properties
+**/src/main/resources/detal-servicekey.json
+**/src/main/resources/macvendors.token
+template_protokol.docx
+template_umowa.docx
+
 ### STS ###
 .apt_generated
 .classpath

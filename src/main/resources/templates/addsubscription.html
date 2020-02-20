@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dodaj usługę dla klienta</title>
+
+    <div th:replace="fragments/header :: header-css"/>
+
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <form role="form" th:action="@{/addsubscription}" th:object="${subscription}" method="post">
+                <div>
+                    <h4 th:text="@{${customer.name}+' '+${customer.surname}}"/>
+                    <h5 th:text="${customer.address}"/>
+                </div>
+                <div class="form-group">
+                    <label for="speed">Prędkość</label>
+                    <select class="form-control" id="speed" th:field="*{speed}">
+                        <option value="300/30">300/30 Mbps</option>
+                        <option value="150/20">150/20 Mbps</option>
+                        <option value="50/15">50/15 Mbps</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="PublicIP">Publiczne IP</label>
+                            <input type="checkbox" class="form-control" data-toggle="toggle" id="PublicIP" th:field="*{publicIp}">
+                        </div>
+                        <div class="col">
+                            <label for="Wifi">Router WiFi</label>
+                            <input type="checkbox" class="form-control" data-toggle="toggle" id="Wifi" th:field="*{wifi}">
+                        </div>
+                        <div class="col">
+                            <label for="Iptv">Telewizja</label>
+                            <input type="checkbox" class="form-control" data-toggle="toggle" id="Iptv" th:field="*{iptv}"
+                                   onchange="document.getElementById('tvPort').disabled = !this.checked;">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="ontType">Typ ONT</label>
+                        <input type="text" class="form-control inline" id="ontType" th:field="*{ontType}">
+                    </div>
+                    <div class="col">
+                        <label for="ontSn">ONT S/N</label>
+                        <input type="text" class="form-control inline" id="ontSn" th:field="*{ontSn}" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col">
+                        <label for="oltPort">Port OLT</label>
+                        <select class="form-control" id="oltPort" th:field="*{oltPort}">
+                            <option value="1">1 - Miodowa Kurcewiczówny</option>
+                            <option value="2">2 - Rynek Łabędzia</option>
+                            <option value="3">3 - Mikołajewicza</option>
+                            <option value="4">4 - Sarnowa MGórka</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="tvPort">Ilość portów TV na ONT</label>
+                        <select class="form-control" id="tvPort" th:disabled="*{!iptv}" th:field="*{tvPort}">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="macId">MAC</label>
+                    <input type="text" class="form-control" id="macId" th:field="*{macId}" autocomplete="off"
+                           data-toggle="popover" data-html="true"
+                           data-content="Z naklejki ONT np: C850E91234AB<br>Inny router klienta <b>PRZEPISUJEMY BEZ KROPEK, KRESEK, DWUKROPKÓW</b>">
+                </div>
+                <input type="hidden" name="customerId" th:value="${customer.id}">
+                <input type="hidden" name="onuId" th:value="*{onuId}">
+                <input type="hidden" name="mngtIp" th:value="*{mngtIp}">
+                <input type="hidden" name="ip" th:value="*{ip}">
+                <input type="hidden" name="subnetMask" th:value="*{subnetMask}">
+                <input type="hidden" name="gateway" th:value="*{gateway}">
+                <input type="hidden" id="id" th:field="*{id}">
+                <button type="submit" class="btn btn-primary">
+                    Zapisz
+                </button>
+                <a class="btn btn-danger" th:href="@{'/customer?id='+${customer.id}}">
+                    Wróć
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"/>
+<script>
+    $(function () {
+      $('[data-toggle="popover"]').popover({
+        title: 'Format danych',
+        placement: 'top',
+        trigger: 'focus'
+      })
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="navs">
+    <ul class="nav nav-tabs nav-fill">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/editcustomer?id='+${customer.id}}">
+                <i class="material-icons md-18">edit</i> Dane klienta
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{'/addsubscription?id='+${customer.id}}">
+                <i class="material-icons md-18">tune</i> Usługi
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="modal" data-target="#addNoticeModal">
+                <i class="material-icons md-18">note_add</i> Notatka
+            </a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="material-icons md-18">settings</i> Konfiguracja
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{'/getconfdhcp?id='+${customer.id}}">
+                    <i class="material-icons md-18">settings_ethernet</i> Przydział DHCP
+                </a>
+                <a class="dropdown-item" th:href="@{'/getconfgpon?id='+${subscription.id}}">
+                    <i class="material-icons md-18">compare_arrows</i> Połączenie GPON
+                </a>
+                <a class="dropdown-item btn btn-outline-danger" href="#" data-toggle="modal" data-target="#wifi">
+                    <i class="material-icons md-18">wifi</i> Ustaw WiFi
+                </a>
+                <div sec:authorize="hasAuthority('ADMIN')">
+                    <a class="dropdown-item btn btn-outline-danger" th:href="@{'/unregisteronu?id='+${subscription.id}}">
+                        <i class="material-icons md-18">report_off</i> Wyrejestruj ONU
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="modal" data-target="#contractModal">
+                <i class="material-icons md-18">library_books</i> Umowa
+            </a>
+        </li>
+        <div sec:authorize="hasAuthority('ADMIN')">
+            <li class="nav-item">
+                <a class="nav-link btn btn-outline-danger" href="#" data-toggle="modal" data-target="#deleteModal">
+                    <i class="material-icons md-18">delete</i> Usuń
+                </a>
+            </li>
+        </div>
+    </ul>
+</div>
+
+<div th:fragment="modals">
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body" >
+                    <h3>Na pewno usunąć klienta?</h3>
+                    <h4 th:text="@{${customer.name}+' '+${customer.surname}}"></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Anuluj</button>
+                    <a role="button" class="btn btn-danger" th:href="@{'/delcustomer?id='+${customer.id}}">Usuń</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Notice Modal -->
+    <div class="modal fade" id="addNoticeModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form role="form" th:action="@{/addnotice}" th:object="${emptynotice}" method="post">
+                    <div class="modal-body" >
+                        <div class="form-group">
+                            <label for="Title">Tytuł</label>
+                            <input type="text" class="form-control" id="Title" th:field="*{title}">
+                        </div>
+                        <div class="form-group">
+                            <label for="Message">Tekst notatki</label>
+                            <textarea class="form-control" id="Message" th:field="*{message}"></textarea>
+                        </div>
+                        <input type="hidden" name="customerId" th:value="${customer.id}">
+                        <input type="hidden" id="id" th:field="*{id}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-info" data-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- WiFi -->
+    <div class="modal fade" id="wifi" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form role="form" th:action="@{/wifisetup}" th:object="${wifisettings}" method="post">
+                    <div class="modal-body" >
+                        <div class="form-group">
+                            <label for="SSID">Nazwa sieci WiFi / SSID</label>
+                            <input type="text" class="form-control" id="SSID" th:field="*{ssid}">
+                        </div>
+                        <div class="form-group">
+                            <label for="Password">Hasło WiFi - min. 8 znaków</label>
+                            <input class="form-control" id="Password" th:field="*{password}">
+                        </div>
+                        <input type="hidden" name="subscriptionId" th:value="${subscription.id}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-info" data-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate contract Modal -->
+    <div class="modal fade" id="contractModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form role="form" th:action="@{/gencontract}" th:object="${addinfoforcontract}" method="post">
+                    <div class="modal-body" >
+                        <h5>Podaj dane do umowy</h5>
+                        <div class="dates form-group">
+                            <label for="calendar">Data instalacji (data umowy)</label>
+                            <input type="text" class="form-control" id="calendar" th:field="*{installationDate}" placeholder="RRRR-MM-DD" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="installationFee">Podaj wartość opłaty instalacyjnej</label>
+                            <input type="text" class="form-control" id="installationFee" th:field="*{installationFee}">
+                        </div>
+                        <div class="form-group">
+                            <label for="discount">Podaj wartość rabatu</label>
+                            <input type="text" class="form-control" id="discount" th:field="*{discount}">
+                        </div>
+                        <input type="hidden" name="customerId" th:value="${customer.id}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-info" data-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary">Generuj</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

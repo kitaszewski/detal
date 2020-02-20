@@ -1,0 +1,30 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+</head>
+<body>
+    <div th:fragment="footer">
+
+        <div class="container">
+
+            <footer>
+                <br>
+                © 2020 Piotr Kowalewski
+                <br>
+                <span sec:authorize="isAuthenticated()">
+                    Zalogowany: <span sec:authentication="name" id="userName"></span> |
+                    uprawnienia: <span sec:authentication="principal.authorities"></span>
+                </span>
+            </footer>
+        </div>
+
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <script th:src="@{/js/popper.min.js}"></script>
+        <script th:src="@{/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bootstrap-toggle.min.js}"></script>
+        <script th:src="@{/js/bootstrap-datepicker.js}"></script>
+        <script th:src="@{/js/bootstrap-datepicker.pl.min.js}"></script>
+    </div>
+</body>
+</html>

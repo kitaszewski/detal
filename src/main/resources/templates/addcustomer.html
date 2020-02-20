@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dodaj nowego klienta</title>
+
+    <div th:replace="fragments/header :: header-css"/>
+
+</head>
+<body onload="setFields()">
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <form role="form" th:action="@{/addcustomer}" th:object="${customer}" method="post">
+                <div class="form-group">
+                    <label for="detalorbusiness">Rodzaj klienta</label>
+                    <input type="checkbox" id="detalorbusiness" th:field="*{business}">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label id="SurnameLbl" for="Surname">Nazwisko</label>
+                            <input type="text" class="form-control" id="Surname" th:field="*{surname}" autocomplete="off">
+                        </div>
+                        <div class="col" id="NameGroup">
+                            <label for="Name">Imię</label>
+                            <input type="text" class="form-control" id="Name" th:field="*{name}" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Address">Adres klienta</label>
+                    <input type="text" class="form-control" id="Address" th:field="*{address}" autocomplete="off"
+                           data-toggle="popover" data-content="63-900 Rawicz, ul. Nowa 1/2">
+                </div>
+                <div class="form-group">
+                    <label for="Address">Adres instalacji </label>
+                    <span th:if="${customer.installationAddress == ''}">
+                        <input type="checkbox" id="instadd" checked="checked">
+                        <input type="hidden" class="form-control" id="InstallationAddress" th:field="*{installationAddress}" autocomplete="off"
+                               data-toggle="popover" data-content="63-900 Rawicz, ul. Nowa 1/2">
+                    </span>
+                    <span th:unless="${customer.installationAddress == ''}">
+                        <input type="checkbox" id="instadd">
+                        <input type="text" class="form-control" id="InstallationAddress" th:field="*{installationAddress}" autocomplete="off"
+                               data-toggle="popover" data-content="63-900 Rawicz, ul. Nowa 1/2">
+                    </span>
+                    </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="Email">Email</label>
+                            <input type="email" class="form-control" id="Email" th:field="*{email}" autocomplete="off">
+                        </div>
+                        <div class="col">
+                            <label for="Phone">Telefon</label>
+                            <input type="text" class="form-control" id="Phone" th:field="*{phone}" autocomplete="off"
+                                   data-toggle="popover" data-content="501234567">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label id="PeselLbl" for="Pesel">PESEL</label>
+                            <input type="text" class="form-control" id="Pesel" th:field="*{pesel}" autocomplete="off">
+                        </div>
+                        <div class="col" id="IdCardGroup" >
+                            <label for="IdCard">Numer dowodu osobistego</label>
+                            <input type="text" class="form-control" id="IdCard" th:field="*{idCardNumber}" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="id" th:field="*{id}">
+                <button type="submit" class="btn btn-primary">Zapisz</button>
+                <span th:if="${customer.id != null}">
+                    <a class="btn btn-danger" th:href="@{'/customer?id='+${customer.id}}">Wróć</a>
+                </span>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"/>
+
+<script>
+  var namegrp = document.getElementById('NameGroup');
+  var idcardgrp = document.getElementById('IdCardGroup');
+  var surnamelbl = document.getElementById('SurnameLbl');
+  var pesellbl = document.getElementById('PeselLbl');
+
+  function setFields(){
+    var customerType = document.getElementById('detalorbusiness');
+    if($(customerType).prop('checked')){
+      namegrp.style.visibility='hidden';
+      idcardgrp.style.visibility='hidden';
+      surnamelbl.innerHTML = "Nazwa firmy";
+      pesellbl.innerHTML = "NIP";
+    }
+  }
+
+  $(function() {
+    $('#detalorbusiness').bootstrapToggle({
+      off:'Indywidualny',
+      on:'Firma',
+      onstyle:'info',
+      offstyle:'primary',
+      width:'120'
+    });
+
+    $('#detalorbusiness').change(function() {
+      if ($(this).prop('checked')){
+        namegrp.style.visibility='hidden';
+        idcardgrp.style.visibility='hidden';
+        surnamelbl.innerHTML = "Nazwa firmy";
+        pesellbl.innerHTML = "NIP";
+      } else {
+        namegrp.style.visibility='visible';
+        idcardgrp.style.visibility='visible';
+        surnamelbl.innerHTML = "Nazwisko";
+        pesellbl.innerHTML = "PESEL";
+      }
+    })
+
+    $('#instadd').bootstrapToggle({on:'j.w.', off:'inny'});
+
+    $('#instadd').change(function() {
+      if (!$(this).prop('checked')){
+        document.getElementById('InstallationAddress').setAttribute('type', 'text');
+      } else {
+        var a = document.getElementById('InstallationAddress');
+        a.setAttribute('type', 'hidden');
+        a.setAttribute('value', '');
+      }
+    })
+
+    $(function () {
+      $('[data-toggle="popover"]').popover({
+        title: 'Format danych',
+        placement: 'top',
+        trigger: 'focus'
+      })
+    })
+  })
+</script>
+
+</body>
+</html>

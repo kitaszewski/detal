@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+  <head>
+	  <title>Skrzynka SMS</title>
+
+	  <div th:replace="fragments/header :: header-css"/>
+
+  </head>
+  <body>
+
+  <div th:replace="fragments/header :: header"/>
+
+    <div class="container-fluid">
+			<div class="col-md-10">
+				<div>
+					<ul class="nav nav-pills">
+						<li class="nav-item">
+							<a class="nav-link" href="#" data-toggle="modal" data-target="#smsModal">Nowy</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/smsbox/sent}">
+								Wysłane <span class="badge badge-secondary" th:text="${sent}">?</span>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/smsbox/inbox}">
+								Odebrane <span class="badge badge-secondary" th:text="${inbox}">?</span>
+							</a>
+						</li>
+						<div sec:authorize="hasAuthority('ADMIN')">
+							<li class="nav-item">
+								<a class="nav-link btn btn-outline-danger" th:href="@{/cleanalarms}">
+									Alarmy <span class="badge badge-secondary" th:text="${alarms}">?</span>
+								</a>
+							</li>
+						</div>
+					</ul>
+				</div>
+				<span th:if="${view == 'sent'}">
+					<h3>Wiadomości wysłane</h3>
+				</span>
+				<span th:if="${view == 'inbox'}">
+					<h3>Wiadomości odebrane</h3>
+				</span>
+				<table id="smsTable" class="table table-striped table-hover table-sm">
+					<thead>
+					<tr>
+						<th>Telefon</th>
+						<th>Wiadomość</th>
+						<span th:if="${view == 'inbox'}">
+							<th>Otrzymane</th>
+						</span>
+					</tr>
+					<tr th:each="sms : ${smslist}">
+						<span th:if="${sms.id_customer != 0}">
+							<td>
+								<a th:href="@{'/customer?id='+${sms.id_customer}}" th:text="${sms.number}"></a>
+							</td>
+						</span>
+						<span th:unless="${sms.id_customer != 0}">
+							<td th:text="${sms.number}"></td>
+						</span>
+						<td th:text="${sms.message}"></td>
+						<span th:if="${view == 'inbox'}">
+							<td th:text="${sms.sender}"></td>
+						</span>
+					</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+	</div>
+
+  <div th:replace="fragments/footer :: footer"/>
+
+  <div th:fragment="modals">
+	  <!-- SMS -->
+	  <div class="modal fade" id="smsModal" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+			  <div class="modal-content">
+				  <form role="form" id="smsForm" th:action="@{/newsms}" th:object="${sms2send}" method="post">
+					  <div class="modal-body" >
+						  <div class="form-group">
+							  <label for="number">Numer telefonu (format 501234567)</label>
+							  <input type="text" id="number" th:field="*{number}" autocomplete="off">
+						  </div>
+						  <div class="form-group">
+							  <label for="message">Treść</label>
+							  <textarea type="text" class="form-control" id="message" th:field="*{message}" onkeyup="charCounter(this.value)"> Wiadomosc automatyczna Rawinet</textarea>
+							  <span id="messageLength"></span>
+						  </div>
+						  <input type="hidden" id="sender" th:field="*{sender}">
+					  </div>
+					  <div class="modal-footer">
+						  <button type="reset" class="btn btn-info" data-dismiss="modal">Anuluj</button>
+						  <button type="submit" class="btn btn-primary">Wyślij</button>
+					  </div>
+				  </form>
+			  </div>
+		  </div>
+	  </div>
+  </div>
+
+  <script src="js/charCounter.js"></script>
+
+  </body>
+</html>
