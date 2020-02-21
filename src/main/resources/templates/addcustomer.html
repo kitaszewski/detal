@@ -13,6 +13,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-6">
+            <div th:each="error:${errors}">
+                <div class="alert alert-danger" role="alert" th:text="${error}"/>
+            </div>
             <form role="form" th:action="@{/addcustomer}" th:object="${customer}" method="post">
                 <div class="form-group">
                     <label for="detalorbusiness">Rodzaj klienta</label>

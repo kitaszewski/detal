@@ -44,11 +44,11 @@
 						<td>Dokument</td>
 
 						<td>
-							<span th:if="${customer.business == 0}">
+							<span th:if="${customer.business == false}">
 								<div th:utext="@{'Dowód osobisty '+${customer.idCardNumber}}"></div>
 								<div th:utext="@{'PESEL '+${customer.pesel}}"></div>
 							</span>
-							<span th:unless="${customer.business == 0}">
+							<span th:unless="${customer.business == false}">
 								<div th:utext="@{'NIP '+${customer.pesel}}"></div>
 							</span>
 						</td>

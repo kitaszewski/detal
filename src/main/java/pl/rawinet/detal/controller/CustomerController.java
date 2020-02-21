@@ -4,18 +4,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.ModelAndView;
 import pl.rawinet.detal.macvendorsAPI.MacVendorsClient;
 import pl.rawinet.detal.model.*;
 import pl.rawinet.detal.service.*;
 import pl.rawinet.detal.utils.ContractGenerator;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class CustomerController {
@@ -74,11 +79,19 @@ public class CustomerController {
     }
 
     @PostMapping("/addcustomer")
-    public ModelAndView saveCustomer(Customer customer) {
-        Customer addedCustomer = customerService.saveOrUpdate(customer);
+    public ModelAndView saveCustomer(@Valid Customer customer, BindingResult result) {
         ModelAndView m = new ModelAndView();
-        m.addObject("customer", addedCustomer);
-        m.setViewName("redirect:/customer?id=" + addedCustomer.getId());
+        if(result.hasErrors()){
+            m.addObject("customer", customer);
+            m.setViewName("addcustomer");
+            List<String> errors = result.getFieldErrors().stream().map(r -> r.getDefaultMessage()).collect(Collectors.toList());
+            m.addObject("errors", errors);
+        } else {
+            Customer addedCustomer = customerService.saveOrUpdate(customer);
+            m.addObject("customer", addedCustomer);
+            m.setViewName("redirect:/customer?id=" + addedCustomer.getId());
+        }
+
         return m;
     }
 
