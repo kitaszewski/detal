@@ -1,7 +1,7 @@
 package pl.rawinet.detal.macvendorsAPI;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Objects;
 
 @Component
 public class MacVendorsClient extends MacAddress {
@@ -53,6 +50,24 @@ public class MacVendorsClient extends MacAddress {
             result = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
             this.vendor = result.getBody();
         } catch (Exception ignored) {
+        }
+    }
+
+    public String checkFullInfo() {
+        HttpEntity httpEntity = new HttpEntity(this.headers);
+        RestTemplate restTemplate = new RestTemplate();
+        String url = endpointPath+ this.getMac();
+
+        ResponseEntity<JsonNode> result = null;
+        try {
+            result = restTemplate.exchange(url, HttpMethod.GET, httpEntity, JsonNode.class);
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(result.getBody().toString());
+            return node.at("/data/organization_name").asText();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Not found";
         }
     }
 }
