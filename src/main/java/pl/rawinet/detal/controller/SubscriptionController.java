@@ -1,8 +1,10 @@
 package pl.rawinet.detal.controller;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import pl.rawinet.detal.model.Customer;
@@ -18,6 +20,7 @@ import pl.rawinet.detal.utils.TelnetConnection;
 import java.io.IOException;
 
 @Controller
+@Log4j2
 public class SubscriptionController {
 
     @Autowired
@@ -36,8 +39,8 @@ public class SubscriptionController {
     @Autowired
     TelnetConnection telnetConnection;
 
-    @GetMapping("/addsubscription")
-    public ModelAndView addSubscriptionForm(Integer id) {
+    @GetMapping("/addsubscription/{id}")
+    public ModelAndView addSubscriptionForm(@PathVariable("id") int id) {
         ModelAndView m = new ModelAndView();
         m.addObject("customer", customerService.getCustomerById(id));
         m.addObject("subscription", subscriptionService.getSubscriptionByCustomerId(id));
@@ -48,7 +51,6 @@ public class SubscriptionController {
     @PostMapping("/addsubscription")
     public ModelAndView saveSubscription(Subscription subscription) {
         ModelAndView m = new ModelAndView();
-        //bez tego potem zle wyznaczy profile gpon
         if(subscription.getTvPort() == 0 && subscription.isIptv()){
             subscription.setTvPort(1);
         }
@@ -68,34 +70,37 @@ public class SubscriptionController {
         subscriptionService.saveOrUpdate(subscription);
         int id = subscription.getCustomerId();
         m.addObject("customer", customerService.getCustomerById(id));
-        m.setViewName("redirect:/customer?id="+id);
+        m.setViewName("redirect:/customer/"+id);
+        log.info("Zapis uslug dla klienta id: "+id+' '+subscription.toString());
         return m;
     }
 
-    @GetMapping("/macconvert")
-    public ModelAndView macConvert(int sid){
+    @GetMapping("/macconvert/{sid}")
+    public ModelAndView macConvert(@PathVariable("sid") int sid){
         ModelAndView m = new ModelAndView();
         Subscription s = subscriptionService.getSubscriptionById(sid);
         ConfigGenerator cg = new ConfigGenerator();
+        log.info("Przeliczenie MAC z naklejki: "+s.getMacId());
         s.setMacId(cg.ontStickerMac(s.getMacId()));
         m.addObject("customer", customerService.getCustomerById(s.getCustomerId()));
-        m.setViewName("redirect:/customer?id="+s.getCustomerId());
+        m.setViewName("redirect:/customer/"+s.getCustomerId());
         return m;
     }
 
-    @GetMapping("/macformat")
-    public ModelAndView macFormat(int sid){
+    @GetMapping("/macformat/{sid}")
+    public ModelAndView macFormat(@PathVariable("sid") int sid){
         ModelAndView m = new ModelAndView();
         Subscription s = subscriptionService.getSubscriptionById(sid);
         ConfigGenerator cg = new ConfigGenerator();
+        log.info("Formatowanie MAC: "+s.getMacId());
         s.setMacId(cg.formatMac(s.getMacId()));
         m.addObject("customer", customerService.getCustomerById(s.getCustomerId()));
-        m.setViewName("redirect:/customer?id="+s.getCustomerId());
+        m.setViewName("redirect:/customer/"+s.getCustomerId());
         return m;
     }
 
-    @GetMapping("/getconfdhcp")
-    public ModelAndView getConfigurationDhcp(Integer id) throws IOException {
+    @GetMapping("/getconfdhcp/{id}")
+    public ModelAndView getConfigurationDhcp(@PathVariable("id") int id) throws IOException {
         Notice note = new Notice();
         Customer customer = customerService.getCustomerById(id);
         PolishCharsRemover remover = new PolishCharsRemover();
@@ -113,16 +118,16 @@ public class SubscriptionController {
         String routerResult = mtkConnection.sendToMtk(cfg);
 
         note.setMessage(cfg+"<br>"+routerResult);
-        System.out.println(note.getMessage());
         noticeService.saveOrUpdate(note);
 
         ModelAndView m = new ModelAndView();
-        m.setViewName("redirect:/customer?id="+id);
+        m.setViewName("redirect:/customer/"+id);
+        log.info("Generowanie DHCP: "+routerResult);
         return m;
     }
 
-    @GetMapping("/getconfgpon")
-    public ModelAndView getConfigurationGpon(Integer id) throws IOException {
+    @GetMapping("/getconfgpon/{id}")
+    public ModelAndView getConfigurationGpon(@PathVariable("id") int id) throws IOException {
         Notice note = new Notice();
         ConfigGenerator cg = new ConfigGenerator();
         Subscription s = subscriptionService.getSubscriptionById(id);
@@ -146,8 +151,6 @@ public class SubscriptionController {
                 ,onuProfileService.bindOnuLineProfile(s).getIdProfile()
                 ,onuProfileService.bindOnuServiceProfile(s).getIdProfile()
                 ,s.getMngtIp());
-
-        System.out.println(cfg);
         //put config to GPON OLT
         String telnetResult = telnetConnection.sendToOlt(cfg.replace("<br>", "\r\n"));
 
@@ -157,12 +160,13 @@ public class SubscriptionController {
         noticeService.saveOrUpdate(note);
 
         ModelAndView m = new ModelAndView();
-        m.setViewName("redirect:/customer?id="+s.getCustomerId());
+        m.setViewName("redirect:/customer/"+s.getCustomerId());
+        log.info("Generowanie GPON: "+telnetResult);
         return m;
     }
 
-    @GetMapping("/unregisteronu")
-    public ModelAndView unregisterOnu(Integer id) throws IOException {
+    @GetMapping("/unregisteronu/{id}")
+    public ModelAndView unregisterOnu(@PathVariable("id") int id) throws IOException {
         Notice note = new Notice();
         Subscription s = subscriptionService.getSubscriptionById(id);
 
@@ -180,7 +184,8 @@ public class SubscriptionController {
         noticeService.saveOrUpdate(note);
 
         ModelAndView m = new ModelAndView();
-        m.setViewName("redirect:/customer?id="+s.getCustomerId());
+        m.setViewName("redirect:/customer/"+s.getCustomerId());
+        log.info("Wyrejestrowano ONU");
         return m;
     }
 
@@ -189,6 +194,7 @@ public class SubscriptionController {
         Notice note = new Notice();
         ConfigGenerator cg = new ConfigGenerator();
         Subscription s = subscriptionService.getSubscriptionById(wifiSettings.getSubscriptionId());
+        log.info("Konfiguracja WiFi id klienta: "+s.getId()+" dane: "+wifiSettings.toString());
 
         note.setTitle("Ustawienie sieci WiFi");
         note.setCustomerId(s.getCustomerId());
@@ -202,7 +208,7 @@ public class SubscriptionController {
 
         ModelAndView m = new ModelAndView();
         m.addObject("customer", customerService.getCustomerById(s.getCustomerId()));
-        m.setViewName("redirect:/customer?id="+s.getCustomerId());
+        m.setViewName("redirect:/customer/"+s.getCustomerId());
         return m;
     }
 }

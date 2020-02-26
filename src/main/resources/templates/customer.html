@@ -95,7 +95,7 @@
 									<div th:utext="@{'Brama: '+${subscription.gateway}}"></div>
 								</span>
 								<span th:unless="${subscription.ip != ''}">
-									<a class="btn btn-sm" th:href="@{'/assignip?id='+${customer.id}}">
+									<a class="btn btn-sm" th:href="@{'/assignip/'+${customer.id}}">
 										<i class="material-icons md-18">playlist_add</i> Przydziel adres IP
 									</a>
 								</span>
@@ -103,10 +103,10 @@
 								<div>
 									<span th:utext="@{'MAC: '+${subscription.macId}}"></span>
 									<span th:if="${subscription.macId.matches('[a-fA-F0-9]{12}')}">
-										<a class="btn btn-sm btn-primary" th:href="@{'/macconvert?sid='+${subscription.id}}">MAC z naklejki ONT</a>
+										<a class="btn btn-sm btn-primary" th:href="@{'/macconvert/'+${subscription.id}}">MAC z naklejki ONT</a>
 									</span>
 									<span th:unless="${subscription.macId.matches('([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}')}">
-										<a class="btn btn-sm btn-primary" th:href="@{'/macformat?sid='+${subscription.id}}">Formatuj MAC</a>
+										<a class="btn btn-sm btn-primary" th:href="@{'/macformat/'+${subscription.id}}">Formatuj MAC</a>
 									</span>
 								</div>
 								<div th:if="${macvendor != null}" th:utext="@{'Router: '+${macvendor}}">

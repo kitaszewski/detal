@@ -79,7 +79,7 @@
                 <input type="hidden" id="id" th:field="*{id}">
                 <button type="submit" class="btn btn-primary">Zapisz</button>
                 <span th:if="${customer.id != null}">
-                    <a class="btn btn-danger" th:href="@{'/customer?id='+${customer.id}}">Wróć</a>
+                    <a class="btn btn-danger" th:href="@{'/customer/'+${customer.id}}">Wróć</a>
                 </span>
             </form>
         </div>

@@ -1,5 +1,6 @@
 package pl.rawinet.detal.controller;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@Log4j2
 public class SmsController {
     @Autowired
     CustomerServiceImpl customerService;
@@ -79,6 +81,7 @@ public class SmsController {
         RestTemplate restTemplate = new RestTemplate();
         String url=smsgate.GetEndpointUrl("clear");
         ResponseEntity<Response> result = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, Response.class);
+        log.info("Wyczyszczono alarmy sms");
         return m;
     }
 
@@ -91,6 +94,7 @@ public class SmsController {
         RestTemplate restTemplate = new RestTemplate();
         String url=smsgate.GetEndpointUrl("new");
         ResponseEntity<Response> result = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Response.class);
+        log.info("Wyslano nowy sms. Nadawca: "+sms.getSender());
         return m;
     }
 

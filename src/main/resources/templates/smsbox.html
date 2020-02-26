@@ -54,7 +54,7 @@
 					<tr th:each="sms : ${smslist}">
 						<span th:if="${sms.id_customer != 0}">
 							<td>
-								<a th:href="@{'/customer?id='+${sms.id_customer}}" th:text="${sms.number}"></a>
+								<a th:href="@{'/customer/'+${sms.id_customer}}" th:text="${sms.number}"></a>
 							</td>
 						</span>
 						<span th:unless="${sms.id_customer != 0}">

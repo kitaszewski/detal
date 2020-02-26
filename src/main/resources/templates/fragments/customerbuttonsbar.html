@@ -6,12 +6,12 @@
 <div th:fragment="navs">
     <ul class="nav nav-tabs nav-fill">
         <li class="nav-item">
-            <a class="nav-link" th:href="@{'/editcustomer?id='+${customer.id}}">
+            <a class="nav-link" th:href="@{'/editcustomer/'+${customer.id}}">
                 <i class="material-icons md-18">edit</i> Dane klienta
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" th:href="@{'/addsubscription?id='+${customer.id}}">
+            <a class="nav-link" th:href="@{'/addsubscription/'+${customer.id}}">
                 <i class="material-icons md-18">tune</i> Usługi
             </a>
         </li>
@@ -25,17 +25,17 @@
                 <i class="material-icons md-18">settings</i> Konfiguracja
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" th:href="@{'/getconfdhcp?id='+${customer.id}}">
+                <a class="dropdown-item" th:href="@{'/getconfdhcp/'+${customer.id}}">
                     <i class="material-icons md-18">settings_ethernet</i> Przydział DHCP
                 </a>
-                <a class="dropdown-item" th:href="@{'/getconfgpon?id='+${subscription.id}}">
+                <a class="dropdown-item" th:href="@{'/getconfgpon/'+${subscription.id}}">
                     <i class="material-icons md-18">compare_arrows</i> Połączenie GPON
                 </a>
                 <a class="dropdown-item btn btn-outline-danger" href="#" data-toggle="modal" data-target="#wifi">
                     <i class="material-icons md-18">wifi</i> Ustaw WiFi
                 </a>
                 <div sec:authorize="hasAuthority('ADMIN')">
-                    <a class="dropdown-item btn btn-outline-danger" th:href="@{'/unregisteronu?id='+${subscription.id}}">
+                    <a class="dropdown-item btn btn-outline-danger" th:href="@{'/unregisteronu/'+${subscription.id}}">
                         <i class="material-icons md-18">report_off</i> Wyrejestruj ONU
                     </a>
                 </div>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">Anuluj</button>
-                    <a role="button" class="btn btn-danger" th:href="@{'/delcustomer?id='+${customer.id}}">Usuń</a>
+                    <a role="button" class="btn btn-danger" th:href="@{'/delcustomer/'+${customer.id}}">Usuń</a>
                 </div>
             </div>
         </div>

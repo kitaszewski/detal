@@ -3,6 +3,7 @@ package pl.rawinet.detal.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Subscription {
 
     @Id
@@ -32,5 +34,5 @@ public class Subscription {
     private String macId = "";
     private int tvPort;
     private int vlan;
-    
+
 }

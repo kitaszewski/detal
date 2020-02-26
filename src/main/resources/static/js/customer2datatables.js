@@ -25,7 +25,7 @@ $(document).ready( function () {
             { "mData": "name" },
             { "mData": "address" },
             { "render": function ( mData ) {
-                          return '<a class="btn btn-sm btn-primary" href="/detal/customer?id='+ mData.id +'">'+
+                          return '<a class="btn btn-sm btn-primary" href="/detal/customer/'+ mData.id +'">'+
                           "<i class='material-icons md-18'>more_vert</i>"
                           +'</a>';
                 }

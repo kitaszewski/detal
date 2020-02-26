@@ -3,6 +3,7 @@ package pl.rawinet.detal.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Customer {
 
     @Id
