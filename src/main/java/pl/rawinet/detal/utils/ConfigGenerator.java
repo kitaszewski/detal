@@ -1,8 +1,10 @@
 package pl.rawinet.detal.utils;
 
+import lombok.extern.log4j.Log4j2;
 import pl.rawinet.detal.model.Subscription;
 import pl.rawinet.detal.model.WifiSettings;
 
+@Log4j2
 public class ConfigGenerator {
     private StringBuilder sb;
 
@@ -44,23 +46,8 @@ public class ConfigGenerator {
         return sb.toString();
     }
 
-
-
-//    public String macToMacIdConverter(String mac){
-//        mac=mac.toLowerCase();
-//        int len = mac.length();
-//        String prefix = mac.substring(0,len -2);
-//        String lastTwoChars = mac.substring(len - 2, len);
-//        int mac_value = Integer.decode("0x"+lastTwoChars);
-//        mac_value+=5;
-//        sb.append("01").append(prefix).append(Integer.toHexString(mac_value));
-//        sb.insert(4,'.');
-//        sb.insert(9,'.');
-//        sb.insert(14,'.');
-//        return sb.toString();
-//    }
-
     public String ontStickerMac(String mac){
+        log.info("MAC sticker convert: "+mac);
         mac=mac.toLowerCase();
         int len = mac.length();
         String prefix = mac.substring(0,len -2);
@@ -73,6 +60,7 @@ public class ConfigGenerator {
     }
 
     public String formatMac(String mac){
+        log.info("MAC format: "+mac);
         sb.setLength(0);
         sb.append(mac.toLowerCase());
         sb.insert(10,':');

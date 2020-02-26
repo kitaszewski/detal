@@ -1,8 +1,0 @@
-- Generowanie GPON - jeśli ont bez wifi ma być brak adresu zarządzania ONT (problem np Michalski)
-- Kwoty do umowy z poziomu bazy. Automatyczna wartość rabatu.
-
-
-- notatki zamiana końca lini na <br>
-- przeróbka zmiennych z url do PathVariable
-- Validacja pól
-- validacja aktywnych opcji jeśli brak danych

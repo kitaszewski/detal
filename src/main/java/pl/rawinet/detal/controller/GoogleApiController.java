@@ -1,9 +1,11 @@
 package pl.rawinet.detal.controller;
 
 import com.google.api.services.sheets.v4.model.ValueRange;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 import pl.rawinet.detal.googleApi.SheetsService;
 import pl.rawinet.detal.model.Subscription;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
+@Log4j2
 public class GoogleApiController {
 
     @Autowired
@@ -29,8 +32,8 @@ public class GoogleApiController {
     @Autowired
     ConfigVarServiceImpl configVarService;
 
-    @GetMapping("/assignip")
-    public ModelAndView assignIp(int id) throws IOException, GeneralSecurityException{
+    @GetMapping("/assignip/{id}")
+    public ModelAndView assignIp(@PathVariable("id") int id) throws IOException, GeneralSecurityException{
 
         Subscription subscription = subscriptionService.getSubscriptionByCustomerId(id);
         String range = configVarService.getVal("assignip.range."+subscription.getVlan());
@@ -44,7 +47,7 @@ public class GoogleApiController {
         List<List<Object>> values = sheet.getValuesFromRange(range);
 
         if(values == null || values.isEmpty()){
-            System.out.println("No data found!");
+            log.info("assignIp - No data found!");
         } else {
             for (List row : values) {
                 if (row.size() == 1) {
@@ -64,8 +67,10 @@ public class GoogleApiController {
                 }
             }
         }
+        log.info("Przydzial adresu IP: "+subscription.getIp()+" dla "+
+                customerService.getCustomerById(id).getSurname()+' '+customerService.getCustomerById(id).getName());
         ModelAndView m = new ModelAndView();
-        m.setViewName("redirect:/customer?id="+id);
+        m.setViewName("redirect:/customer/"+id);
         return m;
     }
 }

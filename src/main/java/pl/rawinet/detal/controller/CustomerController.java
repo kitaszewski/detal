@@ -1,13 +1,14 @@
 package pl.rawinet.detal.controller;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.ModelAndView;
 import pl.rawinet.detal.macvendorsAPI.MacVendorsClient;
 import pl.rawinet.detal.model.*;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
+@Log4j2
 public class CustomerController {
 
     @Autowired
@@ -43,14 +45,14 @@ public class CustomerController {
     MacVendorsClient mac;
 
     @GetMapping("/customers")
-    public ModelAndView showCustomerList(Optional<Integer> p) {
+    public ModelAndView showCustomerList() {
         ModelAndView m = new ModelAndView();
         m.setViewName("customers");
         return m;
     }
 
-    @GetMapping("/customer")
-    public ModelAndView showCustomerDetails(Integer id) throws IOException {
+    @GetMapping("/customer/{id}")
+    public ModelAndView showCustomerDetails(@PathVariable("id") int id) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ModelAndView m = new ModelAndView();
         Subscription subscription = subscriptionService.getSubscriptionByCustomerId(id);
@@ -89,22 +91,22 @@ public class CustomerController {
         } else {
             Customer addedCustomer = customerService.saveOrUpdate(customer);
             m.addObject("customer", addedCustomer);
-            m.setViewName("redirect:/customer?id=" + addedCustomer.getId());
+            m.setViewName("redirect:/customer/" + addedCustomer.getId());
         }
-
+        log.info("Zapis klienta: "+customer.toString());
         return m;
     }
 
-    @GetMapping("/editcustomer")
-    public ModelAndView editCustomerForm(Integer id) {
+    @GetMapping("/editcustomer/{id}")
+    public ModelAndView editCustomerForm(@PathVariable("id") int id) {
         ModelAndView m = new ModelAndView();
         m.addObject("customer", customerService.getCustomerById(id));
         m.setViewName("addcustomer");
         return m;
     }
 
-    @GetMapping("/delcustomer")
-    public ModelAndView delCustomer(Integer id) {
+    @GetMapping("/delcustomer/{id}")
+    public ModelAndView delCustomer(@PathVariable("id") int id) {
         ModelAndView m = new ModelAndView();
         noticeService.deleteAllCustomersNotices(id);
         subscriptionService.deleteSubscriptionByCustomerId(id);
@@ -121,12 +123,13 @@ public class CustomerController {
         ModelAndView m = new ModelAndView();
         int id = notice.getCustomerId();
         m.addObject("customers", customerService.getCustomerById(id));
-        m.setViewName("redirect:/customer?id=" + id);
+        m.setViewName("redirect:/customer/" + id);
         return m;
     }
 
     @PostMapping("/gencontract")
     public ModelAndView genContract(AddInfoForContract info) throws IOException {
+        log.info("Generowanie dokumentów, dane do umowy: "+info.toString());
         int id = info.getCustomerId();
 
         Notice notice = new Notice();
@@ -155,7 +158,7 @@ public class CustomerController {
         noticeService.saveOrUpdate(notice);
 
         ModelAndView m = new ModelAndView();
-        m.setViewName("redirect:/customer?id=" + id);
+        m.setViewName("redirect:/customer/" + id);
         return m;
     }
 }

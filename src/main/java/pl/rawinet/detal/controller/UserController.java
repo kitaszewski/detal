@@ -1,5 +1,6 @@
 package pl.rawinet.detal.controller;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import pl.rawinet.detal.model.User;
 import pl.rawinet.detal.service.UserServiceImpl;
 
 @Controller
+@Log4j2
 public class UserController {
     @Autowired
     UserServiceImpl userService;
@@ -31,6 +33,7 @@ public class UserController {
             m.addObject("txt", "ok");
             u.setPassword(newPass);
             userService.saveUser(u);
+            log.info("Zmieniono haslo");
         } else {
             m.addObject("txt", "error");
         }
