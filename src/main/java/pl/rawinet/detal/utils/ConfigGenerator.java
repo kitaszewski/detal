@@ -41,6 +41,9 @@ public class ConfigGenerator {
         sb.append("wifi-ap 1 wpa encryptionmode aes").append("<br>");
         sb.append("wifi-ap 1 wpa key ").append(w.getPassword()).append("<br>");
         sb.append("wifi admin enable").append("<br>");
+        sb.append("wifi admin disable").append("<br>");
+        sb.append("wifi-ap 1 wpa key ").append(w.getPassword()).append("<br>");
+        sb.append("wifi admin enable").append("<br>");
         sb.append("end<br>");
         sb.append("!<br>");
         return sb.toString();

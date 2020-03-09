@@ -31,6 +31,7 @@ public class Subscription {
     private String ip = "";
     private String subnetMask = "";
     private String gateway = "";
+    //TODO add patern validation
     private String macId = "";
     private int tvPort;
     private int vlan;

@@ -1,5 +1,6 @@
 package pl.rawinet.detal.utils;
 
+import com.auth0.jwt.JWT;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,8 @@ public class SmsgateConnection {
 
     RestTemplate restTemplate;
     JSONObject credentialsJson;
+    String token;
+
 
     public SmsgateConnection() {
         this.restTemplate = new RestTemplate();
@@ -32,10 +35,14 @@ public class SmsgateConnection {
 
     public HttpHeaders LoginSmsgate(){
         SetCredentials();
-
-        ResponseEntity<Response> resultLogin = restTemplate.postForEntity(GetEndpointUrl("login"), credentialsJson.toString(), Response.class);
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("Cookie", resultLogin.getHeaders().getFirst("Set-Cookie"));
+
+        if(this.token == null || ((JWT.decode(this.token).getExpiresAt().getTime() - 10000L) < System.currentTimeMillis())){
+            ResponseEntity<Response> resultLogin = restTemplate.postForEntity(GetEndpointUrl("login"), credentialsJson.toString(), Response.class);
+            this.token = resultLogin.getHeaders().getFirst("Authorization").replace("Bearer ","");
+        }
+
+        requestHeaders.add("Authorization", "Bearer " + this.token);
         return requestHeaders;
     }
 
